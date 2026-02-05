@@ -38,14 +38,15 @@ local GameState = {
 Terrain:Clear()
 
 -- ============================================
--- 1. GENERAR TERRENO DE HIERBA
+-- 1. GENERAR TERRENO DE HIERBA (RECTANGULAR)
 -- ============================================
 local grassRegion = Region3.new(
 	Vector3.new(-MAP_SIZE, 0, -MAP_SIZE),
 	Vector3.new(MAP_SIZE, TERRAIN_HEIGHT, MAP_SIZE)
 )
 grassRegion = grassRegion:ExpandToGrid(4)
-Terrain:FillBall(Vector3.new(0, TERRAIN_HEIGHT/2, 0), MAP_SIZE * 1.2, Enum.Material.Grass)
+-- Llenar el región con hierba (rectangulo, no círculo)
+Terrain:FillRegion(grassRegion, 4, Enum.Material.Grass)
 
 print("✓ Terreno de hierba generado")
 
