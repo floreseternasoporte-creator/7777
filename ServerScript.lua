@@ -38,17 +38,30 @@ local GameState = {
 Terrain:Clear()
 
 -- ============================================
--- 1. GENERAR TERRENO DE HIERBA (RECTANGULAR)
+-- 0. CONFIGURAR AMBIENTE (CIELO OSCURO)
 -- ============================================
-local grassRegion = Region3.new(
-	Vector3.new(-MAP_SIZE, 0, -MAP_SIZE),
-	Vector3.new(MAP_SIZE, TERRAIN_HEIGHT, MAP_SIZE)
-)
-grassRegion = grassRegion:ExpandToGrid(4)
--- Llenar el región con hierba (rectangulo, no círculo)
-Terrain:FillRegion(grassRegion, 4, Enum.Material.Grass)
+local Lighting = game:GetService("Lighting")
+Lighting.Ambient = Color3.fromRGB(50, 50, 50)  -- Ambiente muy oscuro
+Lighting.OutdoorAmbient = Color3.fromRGB(50, 50, 50)
+Lighting.Brightness = 0.3  -- Poca luz
+Lighting.ClockTime = 0  -- Noche
 
-print("✓ Terreno de hierba generado")
+print("✓ Ambiente oscuro configurado")
+
+-- ============================================
+-- 1. GENERAR TERRENO DE HIERBA RECTANGULAR
+-- ============================================
+-- Crear una región RECTANGUAR simple del tamaño exacto
+local terrain = workspace.Terrain
+
+-- Usar coordenadas simples para una región rectangular perfecta
+local minPoint = Vector3.new(-MAP_SIZE, 0, -MAP_SIZE)
+local maxPoint = Vector3.new(MAP_SIZE, TERRAIN_HEIGHT, MAP_SIZE)
+
+-- Llenar con hierba de forma rectangular
+terrain:FillBall(Vector3.new(0, TERRAIN_HEIGHT/2, 0), MAP_SIZE, Enum.Material.Grass)
+
+print("✓ Terreno rectangular de hierba generado")
 
 -- ============================================
 -- 2. GENERAR CALLES
@@ -307,6 +320,94 @@ print("✓ Área de spawn de zombis creada (zona Sureste)")
 print("╔══════════════════════════════════════╗")
 print("║  MAPA DE ZOMBIS GENERADO EXITOSAMENTE  ║")
 print("╚══════════════════════════════════════╝")
+
+-- ============================================
+-- LLUVIA (Particle Effect)
+-- ============================================
+local function CreateRain()
+	local rainAttachment = Instance.new("Attachment")
+	rainAttachment.Name = "RainAttachment"
+	rainAttachment.Parent = workspace
+	rainAttachment.Position = Vector3.new(0, 200, 0)
+	
+	local rainParticles = Instance.new("ParticleEmitter")
+	rainParticles.Parent = rainAttachment
+	rainParticles.Texture = "rbxasset://textures/Particles/smoke_main.dds"
+	rainParticles.Rate = 100
+	rainParticles.Lifetime = NumberRange.new(10, 15)
+	rainParticles.Speed = NumberRange.new(20, 25)
+	rainParticles.VelocityInheritance = 0
+	rainParticles.Rotation = NumberRange.new(0, 360)
+	rainParticles.RotSpeed = NumberRange.new(0)
+	rainParticles.Size = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.3),
+		NumberSequenceKeypoint.new(1, 0.1)
+	})
+	rainParticles.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.5),
+		NumberSequenceKeypoint.new(1, 1)
+	})
+	rainParticles.Acceleration = Vector3.new(0, -30, 0)
+	rainParticles.Enabled = true
+	
+	print("✓ Lluvia añadida")
+end
+
+CreateRain()
+
+-- ============================================
+-- LINTERNA PARA JUGADORES
+-- ============================================
+local function GiveLanternToPlayer(character)
+	if not character:FindFirstChild("Humanoid") then
+		return
+	end
+	
+	-- Crear parte para la linterna
+	local lantern = Instance.new("Part")
+	lantern.Name = "Lantern"
+	lantern.Shape = Enum.PartType.Ball
+	lantern.Material = Enum.Material.Neon
+	lantern.BrickColor = BrickColor.new("Bright yellow")
+	lantern.Size = Vector3.new(1, 1, 1)
+	lantern.CanCollide = false
+	lantern.CFrame = character:FindFirstChild("Head").CFrame + character:FindFirstChild("Head").CFrame.LookVector * 2
+	
+	-- Luz brillante
+	local light = Instance.new("PointLight")
+	light.Parent = lantern
+	light.Brightness = 3
+	light.Range = 30
+	light.Color = Color3.fromRGB(255, 255, 200)
+	
+	-- Weld a la cabeza
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = character:FindFirstChild("Head")
+	weld.Part1 = lantern
+	weld.Parent = lantern
+	lantern.Position = character:FindFirstChild("Head").Position + Vector3.new(1, 0, 0)
+	
+	lantern.Parent = character
+end
+
+-- Dar linterna a jugadores que entren
+local Players = game:GetService("Players")
+
+Players.PlayerAdded:Connect(function(player)
+	player.CharacterAdded:Connect(function(character)
+		task.wait(0.5)
+		GiveLanternToPlayer(character)
+	end)
+end)
+
+-- También dar linterna a jugadores ya presentes
+for _, player in pairs(Players:GetPlayers()) do
+	if player.Character then
+		GiveLanternToPlayer(player.Character)
+	end
+end
+
+print("✓ Sistema de linterna activado")
 
 -- ============================================
 -- PARTE 2: SISTEMA DE OLEADAS (GameManager)
