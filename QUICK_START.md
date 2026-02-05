@@ -1,58 +1,48 @@
 # ⚡ GUÍA RÁPIDA DE INSTALACIÓN
 
-## 3 pasos para tener tu juego de zombis funcionando en 5 minutos
+## 2 pasos para tener tu juego de zombis funcionando en 3 minutos
 
 ---
 
-## PASO 1️⃣: Copiar script del mapa
+## PASO 1️⃣: Instalar ServerScript (Mapa + Oleadas)
 
 1. Abre **Roblox Studio**
 2. Crea un nuevo juego (vacío)
 3. En el lado izquierdo, busca **ServerScriptService**
 4. Haz clic derecho → **Insert Object → Script**
-5. **Elimina** el código por defecto (select all + delete)
-6. **Copia** TODO el contenido de `ServerScript.lua` (el archivo completo)
+5. **Elimina** todo el contenido
+6. **Copia** TODO el contenido de `ServerScript.lua`
 7. **Pégalo** en el script de Roblox Studio
 8. **Guarda** (Ctrl+S)
 
 ### ✅ Verifica que:
 - En la consola (Output) veas el mensaje: "MAPA DE ZOMBIS GENERADO EXITOSAMENTE"
+- Después veas: "🧟 ZOMBIE GAME INICIADO"
 - El mapa aparezca en el viewport
-- Veas hierba, calles y edificios
+- Los zombis comiencen a salir
 
 ---
 
-## PASO 2️⃣: (OPCIONAL) Añadir sistema de oleadas
+## PASO 2️⃣: Instalar LocalScript (Combate)
 
-1. En **ServerScriptService**, crea **OTRO** script nuevo
-2. **Copia** el contenido completo de `GameManager.lua`
-3. **Pégalo** en el nuevo script
-4. **Guarda**
-
-### ✅ Verifica que:
-- En la consola aparezca: "ZOMBIE GAME INICIADO"
-- Después de unos segundos: "ONDA 1 INICIADA"
-- Los zombis (partes verdes) aparezcan en la esquina roja
-
----
-
-## PASO 3️⃣: (OPCIONAL) Sistema de combate
-
-1. En **StarterPlayer → StarterCharacterScripts**, crea un **NUEVO** Script
-2. **Copia** el contenido completo de `CombatSystem.lua`
-3. **Pégalo**
-4. **Guarda**
+1. En **StarterPlayer**, busca **StarterCharacterScripts**
+2. Haz clic derecho → **Insert Object → LocalScript**
+3. **Elimina** el contenido por defecto
+4. **Copia** TODO el contenido de `LocalScript.lua`
+5. **Pégalo** en el nuevo LocalScript
+6. **Guarda**
 
 ### ✅ Verifica que:
 - Cuando entres al juego, veas un contador de salud (❤️)
 - Puedas atacar con **Click izquierdo** o **E**
 - Los zombis reciban daño cuando los golpeas
+- Veas los controles en la pantalla
 
 ---
 
 ## 🎮 ¡A JUGAR!
 
-Presiona **Play** (botón de reproducción) en Roblox Studio
+Presiona **Play** (botón de reproducción)
 
 ```
 CONTROLES:
@@ -66,12 +56,12 @@ CONTROLES:
 
 ## 📋 Checklist de Instalación
 
-- [ ] Script del mapa creado en ServerScriptService
+- [ ] ServerScript.lua copiado en ServerScriptService
 - [ ] Mapa visible con hierba, calles y edificios
-- [ ] GameManager creado (opcional pero recomendado)
-- [ ] Zombis apareciendo en oleadas
-- [ ] CombatSystem creado (opcional)
+- [ ] Zombis apareando en oleadas
+- [ ] LocalScript.lua copiado en StarterCharacterScripts
 - [ ] Puedo atacar y hacer daño a zombis
+- [ ] Tengo un contador de salud visible
 
 ---
 
@@ -80,17 +70,16 @@ CONTROLES:
 **Los scripts no ejecutan:**
 - Abre Developer Console (Ctrl+Shift+C)
 - Busca errores en la pestaña "Output"
-- Verifica que el código esté completo (no cortado)
+- Verifica que el código esté completo
 
 **El mapa no aparece:**
 - Espera 10 segundos
 - Haz click en Play nuevamente
-- Verifica que el script esté en ServerScriptService (rojo)
 
 **Los zombis no salen:**
-- Asegúrate de tener GameManager activado
+- Asegúrate de tener ServerScript activado
 - Verifica que haya un jugador conectado
-- Mira la consola para logs de error
+- Mira la consola para logs
 
 ---
 
@@ -98,13 +87,11 @@ CONTROLES:
 
 ```
 ServerScriptService
-├─ Script (ServerScript.lua) ............ Mapa ✓
-├─ Script (GameManager.lua) ............ Oleadas ✓
-└─ [más scripts si lo deseas]
+└─ Script (ServerScript.lua) ......... Mapa + Oleadas ✓
 
 StarterPlayer
 └─ StarterCharacterScripts
-    └─ Script (CombatSystem.lua) ....... Combate ✓
+    └─ LocalScript (LocalScript.lua) . Combate ✓
 ```
 
 ---

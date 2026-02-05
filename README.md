@@ -6,8 +6,8 @@ Juego de zombis completo para Roblox con sistema de oleadas, terreno generado pr
 
 ## 📋 Contenido
 
-- ✅ **ServerScript.lua** - Generador de mapa completo
-- ✅ **GameManager.lua** - Sistema de gestión del juego
+- ✅ **ServerScript.lua** - Generador de mapa + Sistema de oleadas (TODO INTEGRADO)
+- ✅ **LocalScript.lua** - Sistema de combate del jugador
 - 📖 **Instrucciones de instalación**
 
 ---
@@ -48,38 +48,35 @@ Juego de zombis completo para Roblox con sistema de oleadas, terreno generado pr
 1. Abre **Roblox Studio**
 2. Crea un nuevo proyecto (puede ser vacío)
 
-### Paso 2: Insertar ServerScript del Mapa
+### Paso 2: Insertar ServerScript (Mapa + Oleadas)
 1. En el explorador, haz clic derecho en **ServerScriptService**
 2. Selecciona **InsertObject → Script**
 3. Copia TODO el contenido de `ServerScript.lua`
 4. Pégalo en el nuevo script
 5. **Guarda** el proyecto (Ctrl+S)
 
-### Paso 3: Esperar a que genere el mapa
+### Paso 3: Insertar LocalScript (Combate)
+1. En el explorador, navega a **StarterPlayer → StarterCharacterScripts**
+2. Haz clic derecho y selecciona **InsertObject → LocalScript**
+3. Copia TODO el contenido de `LocalScript.lua`
+4. Pégalo en el nuevo LocalScript
+5. **Guarda** el proyecto
+
+### Paso 4: Esperar a que genere el mapa
 - El script tardará unos segundos en generar todo
 - Verás mensajes en la consola (Output) confirmando cada paso
 - ✓ Cuando veas "MAPA DE ZOMBIS GENERADO EXITOSAMENTE" está listo
-
-### Paso 4: Insertar GameManager (Opcional - Para Oleadas)
-1. Crea OTRO script en ServerScriptService
-2. Copia el contenido de `GameManager.lua`
-3. Este script controla las oleadas de zombis
-4. Puedes ajustar los parámetros en `GameManager.Config`
 
 ---
 
 ## 🎛️ Configuración Disponible
 
-### En ServerScript.lua (Mapa):
+### En ServerScript.lua (Mapa + Oleadas):
 ```lua
 local MAP_SIZE = 256                -- Tamaño total del mapa
 local TERRAIN_HEIGHT = 10           -- Altura de la hierba
-local streetWidth = 20              -- Ancho de calle principal
-```
 
-### En GameManager.lua (Juego):
-```lua
-GameManager.Config = {
+local GAME_CONFIG = {
     WaveDelay = 30,                 -- Segundos entre oleadas
     InitialZombieCount = 3,         -- Zombis en onda 1
     ZombieIncrement = 2,            -- Zombis adicionales por onda
@@ -87,6 +84,15 @@ GameManager.Config = {
     ZombieHealth = 50,              -- Vida de cada zombi
     ZombieSpeed = 25,               -- Velocidad de movimiento
     KillReward = 25,                -- Dinero por matar zombi
+}
+```
+
+### En LocalScript.lua (Combate):
+```lua
+local COMBAT_CONFIG = {
+	AttackRange = 15,               -- Rango de ataque en studs
+	AttackDamage = 25,              -- Daño por golpe
+	AttackCooldown = 0.5,           -- Cooldown entre ataques (segundos)
 }
 ```
 

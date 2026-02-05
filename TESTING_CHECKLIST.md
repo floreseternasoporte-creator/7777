@@ -4,7 +4,7 @@ Usa esta lista para verificar que tu juego está funcionando correctamente.
 
 ---
 
-## 📋 FASE 1: Instalación del Mapa
+## 📋 FASE 1: Instalación del ServerScript
 
 - [ ] **ServerScript instalado** en ServerScriptService
 - [ ] **No hay errores** en Output (Ctrl+Shift+C)
@@ -17,7 +17,8 @@ Usa esta lista para verificar que tu juego está funcionando correctamente.
   ✓ Árboles decorativos plantados
   ✓ Punto de spawn creado
   ✓ Área de spawn de zombis creada
-  ✓ MAPA DE ZOMBIS GENERADO EXITOSAMENTE
+  ║ MAPA DE ZOMBIS GENERADO EXITOSAMENTE
+  🧟 ZOMBIE GAME INICIADO
   ```
 
 ---
@@ -41,13 +42,13 @@ Presiona **Play** y verifica:
 
 ---
 
-## 🧟 FASE 3: Sistema de Oleadas (si instalaste GameManager)
+## 🧟 FASE 3: Sistema de Oleadas (Integrado en ServerScript)
 
-- [ ] **GameManager activado** en ServerScriptService
+- [ ] **ServerScript activado** en ServerScriptService
 - [ ] **Sin errores** en consola
 - [ ] **Mensaje de inicio** aparece:
   ```
-  ZOMBIE GAME INICIADO
+  🧟 ZOMBIE GAME INICIADO
   ```
 - [ ] **Después de ~30 segundos** aparece:
   ```
@@ -56,13 +57,13 @@ Presiona **Play** y verifica:
   ```
 - [ ] **3 partes verdes** (zombis) aparecen en la esquina roja
 - [ ] **Los zombis se mueven** hacia tu personaje
-- [ ] **Los zombis desaparecen** cuando los matas (O)
+- [ ] **Los zombis desaparecen** cuando los matas
 - [ ] **Después de unos 60 segundos** sale el mensaje de Onda 2
 - [ ] **Onda 2 tiene más zombis** (5 zombis)
 
 ---
 
-## ⚔️ FASE 4: Sistema de Combate (si instalaste CombatSystem)
+## ⚔️ FASE 4: Sistema de Combate (si instalaste LocalScript)
 
 ### UI
 - [ ] **Medidor de Salud** visible (arriba izquierda)
@@ -217,7 +218,7 @@ Marca cada sección:
 ❌ No aparecen criaturas verdes
 ```
 **Soluciones:**
-1. Verifica que GameManager esté instalado
+1. Verifica que ServerScript esté instalado
 2. En Output, busca "ZOMBIE GAME INICIADO"
 3. Espera 35 segundos (5 de startup + 30 de WaveDelay)
 4. Si nada aparece, revisa consola para errores
@@ -240,7 +241,7 @@ Marca cada sección:
 ❌ Se mueven pero no hacen daño
 ```
 **Soluciones:**
-1. Asegúrate que el CombatSystem esté activado
+1. Asegúrate que el LocalScript esté activado
 2. Acércate más al zombi (menos de 5 studs)
 3. Verifica Output para mensajes de ataque
 4. Recarga el juego completo
@@ -274,10 +275,11 @@ Antes de decir "¡Juego terminado!":
 
 - [ ] El mapa se genera completamente
 - [ ] Los zombis appear y se mueven
+- [ ] El ServerScript ejecuta sin errores
+- [ ] el LocalScript ejecuta sin errores
 - [ ] El jugador puede lastimar zombis
 - [ ] Los zombis pueden lastimar al jugador
 - [ ] El sistema de oleadas funciona
-- [ ] No hay errores en Output
 - [ ] FPS es aceptable (>30)
 - [ ] Puedes jugar mínimo 3 ondas sin crashes
 

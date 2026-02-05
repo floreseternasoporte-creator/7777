@@ -59,6 +59,8 @@ Edificio SW   ║   Edificio SE
 
 ## 🗂️ Objetos en el Workspace
 
+Creados por **ServerScript.lua**:
+
 ### Partes de Terreno
 - `Grass` - Terrain (material Grass)
 - `Street` (múltiples) - Material Concrete
@@ -91,6 +93,8 @@ Edificio SW   ║   Edificio SE
 
 ## 📊 Variables Configurables
 
+Todas en **ServerScript.lua**:
+
 ### Tamaño y Posición
 ```lua
 MAP_SIZE = 256                  -- Tamaño total en studs
@@ -101,7 +105,7 @@ cornerDistance = MAP_SIZE - 30 -- Distancia a las esquinas
 streetWidth = 20               -- Ancho calle principal
 ```
 
-### Zombis (GameManager)
+### Zombis (GAME_CONFIG)
 ```lua
 WaveDelay = 30                 -- Segundos entre oleadas
 InitialZombieCount = 3         -- Zombis primera onda
@@ -112,7 +116,7 @@ ZombieSpeed = 25               -- Velocidad movimiento
 KillReward = 25                -- Dinero por matar
 ```
 
-### Combate (CombatSystem)
+### Combate (En LocalScript.lua - COMBAT_CONFIG)
 ```lua
 AttackRange = 15               -- Rango golpe en studs
 AttackDamage = 25              -- Daño por golpe
@@ -162,19 +166,17 @@ end
    ├─ Construye edificios
    ├─ Planta árboles
    ├─ Crea punto de spawn
-   └─ Crea zona de spawn de zombis
-
-2. GameManager.lua comienza (después de ~7 segundos)
-   ├─ Espera a que carguen jugadores
+   ├─ Crea zona de spawn de zombis
+   ├─ Espera 5 segundos
    ├─ Inicia onda 1
    └─ Loop infinito de oleadas
         ├─ Spawn zombis gradualmente
         ├─ Espera terminen o 60 segundos
         └─ Pasa a siguiente onda
 
-3. CombatSystem.lua se carga cuando jugador entra
+2. LocalScript.lua se carga cuando jugador entra
    ├─ Crea herramienta
-   ├─ Configura AI
+   ├─ Configura sistema de ataque
    ├─ Crea UI de salud
    └─ Escucha inputs de combate
 ```
@@ -184,14 +186,14 @@ end
 ## 🎯 Señales (Connections) Importantes
 
 ```lua
--- GameManager
-humanoid.Died:Connect() ............ Detecta zombi muerto
-task.spawn() ....................... Loop de IA asincrónico
+-- ServerScript.lua
+humanoid.Died:Connect() ............ Detecta zombi muerto cuando muere
+task.spawn() ....................... Loop de IA asincrónica
 
--- CombatSystem
+-- LocalScript.lua
 UserInputService.InputBegan() ...... Detecta ataque jugador
-humanoid.HealthChanged() ........... Actualiza UI
-humanoid.Touched() ................. Detecta daño zombi
+humanoid.HealthChanged() ........... Actualiza UI de salud
+humanoid.Touched() ................. Detecta daño de zombis
 ```
 
 ---
@@ -199,19 +201,19 @@ humanoid.Touched() ................. Detecta daño zombi
 ## 📈 Escalabilidad
 
 ### Aumentar dificultad:
-1. Reducir `WaveDelay` en GameManager
-2. Aumentar `ZombieIncrement`
-3. Reducir `ZombieHealth`
+1. En **ServerScript.lua** → Reducir `WaveDelay` de 30 a 15
+2. En **ServerScript.lua** → Aumentar `ZombieIncrement` de 2 a 3
+3. En **ServerScript.lua** → Reducir `ZombieHealth` de 50 a 25
 
 ### Aumentar complejidad:
-1. Agregar más edificios en ServerScript
-2. Crear tipos de zombis diferentes en GameManager
-3. Implementar armas variadas en CombatSystem
+1. En **ServerScript.lua** → Agregar más edificios en función `createBuilding()`
+2. En **ServerScript.lua** → Crear tipos de zombis diferentes en `SpawnZombie()`
+3. En **LocalScript.lua** → Implementar armas variadas en función `DealDamageToZombies()`
 
 ### Optimizaciones:
-1. Usar `task.spawn()` para no bloquear main thread
-2. Limitar número máximo de zombis en `MaxZombies`
-3. Destruir zombis al morir para liberar memoria
+1. Usar `task.spawn()` para no bloquear main thread ✓
+2. Limitar número máximo de zombis en `MaxZombies` ✓
+3. Destruir zombis al morir para liberar memoria ✓
 
 ---
 

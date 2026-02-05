@@ -1,15 +1,38 @@
 --[[
-	ZOMBIE GAME MAP GENERATOR
-	Este script genera un mapa completo para un juego de zombis en Roblox
-	Incluye: Terreno con hierba, calles, y edificios en las esquinas
+	ZOMBIE GAME - SERVIDOR COMPLETO
+	Generador de mapa + Sistema de oleadas de zombis
+	
+	INSTALACIÓN:
+	1. Paste este script en ServerScriptService
+	2. ¡Listo! Todo funciona automáticamente
 ]]
 
 local Terrain = workspace.Terrain
 
--- Configuración del mapa
-local MAP_SIZE = 256  -- Tamaño del mapa en studs
-local TERRAIN_HEIGHT = 10  -- Altura del terreno
-local GRASS_SIZE = MAP_SIZE * 2  -- Área de hierba
+-- ============================================
+-- CONFIGURACIÓN GENERAL
+-- ============================================
+local MAP_SIZE = 256
+local TERRAIN_HEIGHT = 10
+
+-- Configuración del juego de zombis
+local GAME_CONFIG = {
+	WaveDelay = 30,
+	InitialZombieCount = 3,
+	ZombieIncrement = 2,
+	MaxZombies = 50,
+	ZombieHealth = 50,
+	ZombieSpeed = 25,
+	KillReward = 25,
+}
+
+local GameState = {
+	PlayersData = {},
+	CurrentWave = 0,
+	ActiveZombies = 0,
+	MaxWaveZombies = GAME_CONFIG.InitialZombieCount,
+	GameStarted = false,
+}
 
 -- Limpiar terreno existente
 Terrain:Clear()
@@ -278,22 +301,158 @@ zombieSpawnerPart.Parent = workspace
 print("✓ Área de spawn de zombis creada (zona Sureste)")
 
 -- ============================================
--- FINALIZACIÓN
+-- FINALIZACIÓN DEL MAPA
 -- ============================================
 print("╔══════════════════════════════════════╗")
 print("║  MAPA DE ZOMBIS GENERADO EXITOSAMENTE  ║")
 print("╚══════════════════════════════════════╝")
+
+-- ============================================
+-- PARTE 2: SISTEMA DE OLEADAS (GameManager)
+-- ============================================
+
+local function GivePlayerMoney(player, amount)
+	if not GameState.PlayersData[player] then
+		GameState.PlayersData[player] = {
+			Money = 0,
+			Kills = 0,
+			Deaths = 0
+		}
+	end
+	GameState.PlayersData[player].Money = GameState.PlayersData[player].Money + amount
+end
+
+local function GetAllPlayers()
+	return game:GetService("Players"):GetPlayers()
+end
+
+local function SpawnZombie(position)
+	local zombie = Instance.new("Model")
+	zombie.Name = "Zombie_" .. GameState.CurrentWave .. "_" .. GameState.ActiveZombies
+	
+	-- Cuerpo
+	local humanoidRootPart = Instance.new("Part")
+	humanoidRootPart.Name = "HumanoidRootPart"
+	humanoidRootPart.Shape = Enum.PartType.Block
+	humanoidRootPart.Material = Enum.Material.SmoothPlastic
+	humanoidRootPart.BrickColor = BrickColor.new("Bright green")
+	humanoidRootPart.Size = Vector3.new(2, 3, 1)
+	humanoidRootPart.CanCollide = true
+	humanoidRootPart.CFrame = CFrame.new(position + Vector3.new(0, 5, 0))
+	humanoidRootPart.Parent = zombie
+	
+	-- Cabeza
+	local head = Instance.new("Part")
+	head.Name = "Head"
+	head.Shape = Enum.PartType.Ball
+	head.Material = Enum.Material.SmoothPlastic
+	head.BrickColor = BrickColor.new("Bright green")
+	head.Size = Vector3.new(1.5, 1.5, 1.5)
+	head.CanCollide = true
+	head.CFrame = CFrame.new(position + Vector3.new(0, 6.5, 0))
+	head.Parent = zombie
+	
+	-- Humanoid
+	local humanoid = Instance.new("Humanoid")
+	humanoid.Parent = zombie
+	humanoid.MaxHealth = GAME_CONFIG.ZombieHealth
+	humanoid.Health = GAME_CONFIG.ZombieHealth
+	
+	-- Weld
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = humanoidRootPart
+	weld.Part1 = head
+	weld.Parent = zombie
+	
+	zombie.Parent = workspace
+	
+	-- Manejar muerte
+	humanoid.Died:Connect(function()
+		GameState.ActiveZombies = GameState.ActiveZombies - 1
+		if zombie:IsDescendantOf(workspace) then
+			zombie:Destroy()
+		end
+	end)
+	
+	GameState.ActiveZombies = GameState.ActiveZombies + 1
+	
+	-- IA de persecución
+	task.spawn(function()
+		while zombie:IsDescendantOf(workspace) and humanoid.Health > 0 do
+			local players = GetAllPlayers()
+			local nearestPlayer = nil
+			local nearestDistance = math.huge
+			
+			for _, player in pairs(players) do
+				if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+					local distance = (humanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+					if distance < nearestDistance then
+						nearestDistance = distance
+						nearestPlayer = player
+					end
+				end
+			end
+			
+			if nearestPlayer and nearestPlayer.Character then
+				local targetPos = nearestPlayer.Character.HumanoidRootPart.Position
+				local direction = (targetPos - humanoidRootPart.Position).Unit
+				humanoidRootPart.Velocity = direction * GAME_CONFIG.ZombieSpeed + Vector3.new(0, humanoidRootPart.Velocity.Y, 0)
+			end
+			
+			task.wait(0.1)
+		end
+	end)
+end
+
+local function SpawnZombiesForWave()
+	local spawner = workspace:FindFirstChild("ZombieSpawner")
+	if not spawner then return end
+	
+	for i = 1, GameState.MaxWaveZombies do
+		task.wait(1)
+		SpawnZombie(spawner.Position)
+	end
+end
+
+local function StartNewWave()
+	GameState.CurrentWave = GameState.CurrentWave + 1
+	GameState.MaxWaveZombies = GAME_CONFIG.InitialZombieCount + 
+		(GameState.CurrentWave - 1) * GAME_CONFIG.ZombieIncrement
+	
+	if GameState.MaxWaveZombies > GAME_CONFIG.MaxZombies then
+		GameState.MaxWaveZombies = GAME_CONFIG.MaxZombies
+	end
+	
+	print("╔════════════════════════════════╗")
+	print("  ONDA " .. GameState.CurrentWave .. " INICIADA")
+	print("  Zombis: " .. GameState.MaxWaveZombies)
+	print("╚════════════════════════════════╝")
+	
+	SpawnZombiesForWave()
+end
+
+-- ============================================
+-- LOOP PRINCIPAL DEL JUEGO
+-- ============================================
+
+task.wait(5)
+
 print("")
-print("📍 Características del mapa:")
-print("   • Terreno completo con hierba")
-print("   • Sistema de calles (principal + secundarias)")
-print("   • 8 edificios estratégicamente colocados")
-print("   • Árboles decorativos")
-print("   • Punto de spawn para jugadores (verde)")
-print("   • Área de spawn de zombis (rojo)")
-print("")
-print("💡 Próximos pasos:")
-print("   1. Crear script de zombis")
-print("   2. Crear sistema de armas")
-print("   3. Crear interfaz de jugador")
-print("   4. Implementar lógica de ondas")
+print("═══════════════════════════════════════")
+print("  🧟 ZOMBIE GAME INICIADO")
+print("═══════════════════════════════════════")
+
+GameState.GameStarted = true
+
+while true do
+	StartNewWave()
+	
+	-- Esperar a que terminen todos los zombis o 60 segundos
+	local waveStartTime = tick()
+	while GameState.ActiveZombies > 0 and (tick() - waveStartTime) < 60 do
+		task.wait(1)
+	end
+	
+	print("✓ Onda " .. GameState.CurrentWave .. " completada")
+	task.wait(GAME_CONFIG.WaveDelay)
+end

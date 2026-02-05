@@ -7,7 +7,7 @@ Bienvenido al juego de **Zombis para Roblox**. Esta es tu guía central para ent
 ## 🎯 Comienza Aquí
 
 **Si es tu primera vez:**
-→ Lee [**QUICK_START.md**](QUICK_START.md) primero (5 minutos)
+→ Lee [**QUICK_START.md**](QUICK_START.md) primero (3 minutos)
 
 **Si necesitas ajustes avanzados:**
 → Lee [**REFERENCE.md**](REFERENCE.md)
@@ -22,10 +22,10 @@ Bienvenido al juego de **Zombis para Roblox**. Esta es tu guía central para ent
 ### Archivos Principales (NECESARIOS)
 
 #### 1️⃣ **ServerScript.lua**
-- **Qué hace**: Genera todo el mapa (terreno, calles, edificios, árboles)
+- **Qué hace**: Genera mapa + Sistema de oleadas (TODO integrado)
 - **Dónde va**: ServerScriptService
 - **Tiempo de ejecución**: Al iniciar
-- **Líneas**: ~350
+- **Líneas**: ~400
 - **Dependencias**: Ninguna
 
 ```
@@ -35,51 +35,25 @@ Crea:
 ├─ 8 edificios con techos
 ├─ 10 árboles decorativos
 ├─ Punto de spawn jugadores (verde)
-└─ Punto de spawn zombis (rojo)
+├─ Punto de spawn zombis (rojo)
+├─ Sistema de oleadas infinitas
+└─ IA de zombis
 ```
 
 **Cómo usarlo:**
 1. Copia TODO el contenido
 2. Pega en un Script nuevo en ServerScriptService
-3. ¡Listo! El mapa se genera automáticamente
+3. ¡Listo! El mapa y los zombis se generan automáticamente
 
 ---
 
 ### Archivos Secundarios (RECOMENDADOS)
 
-#### 2️⃣ **GameManager.lua**
-- **Qué hace**: Controla las oleadas de zombis y su comportamiento
-- **Dónde va**: Otro Script en ServerScriptService
-- **Tiempo de ejecución**: Después de ServerScript
-- **Líneas**: ~300
-- **Dependencias**: ServerScript (debe estar primero)
-
-```
-Funciones:
-├─ Crear oleadas de zombis (1, 2, 3, ...)
-├─ Spawnar zombis gradualmente
-├─ IA simple (perseguir jugador)
-├─ Detectar muertes de zombis
-└─ Loop infinito de oleadas
-```
-
-**Configuración disponible:**
-```lua
-WaveDelay = 30              -- Esperar entre oleadas (segundos)
-InitialZombieCount = 3      -- Zombis en onda 1
-ZombieIncrement = 2         -- Zombis adicionales por onda
-MaxZombies = 50             -- Máximo simultáneo
-ZombieHealth = 50           -- Vida del zombi
-ZombieSpeed = 25            -- Velocidad de movimiento
-```
-
----
-
-#### 3️⃣ **CombatSystem.lua**
-- **Qué hace**: Permite al jugador atacar zombis y recibir daño
+#### 2️⃣ **LocalScript.lua**
+- **Qué hace**: Sistema de combate del jugador
 - **Dónde va**: StarterPlayer → StarterCharacterScripts
 - **Tiempo de ejecución**: Cuando el jugador entra
-- **Líneas**: ~200
+- **Líneas**: ~180
 - **Dependencias**: Solo necesita que el mapa esté cargado
 
 ```
@@ -91,12 +65,6 @@ Funciones:
 ├─ Mostrar UI de salud
 └─ Mostrar controles en pantalla
 ```
-
-**Controles automatizados:**
-- Click Izquierdo → Atacar
-- E → Atacar (alternativa)
-- WASD → Moverse (valor por defecto)
-- Espacio → Saltar (valor por defecto)
 
 ---
 
@@ -158,36 +126,24 @@ Funciones:
 
 ## 🚀 Orden de Instalación Recomendado
 
-### Opción A: Mínimo (Solo el mapa)
+### Opción A: Solo Mapa (Rápido)
 ```
 1. Instala ServerScript.lua
 2. Presiona Play
-3. ¡Listo! Tienes un mapa
+3. ¡Listo! Tienes un mapa con oleadas automáticas
 ```
-**Resultado**: Mapa bonito pero sin zombis
+**Resultado**: Mapa + Zombis funcionando
 
 ---
 
-### Opción B: Recomendado (Mapa + Zombis)
+### Opción B: Todo Integrado (RECOMENDADO)
 ```
 1. Instala ServerScript.lua
-2. Instala GameManager.lua
+2. Instala LocalScript.lua
 3. Presiona Play
-4. ¡Listo! Juga oleadas infinitas
+4. ¡Listo! Juego completamente funcional
 ```
-**Resultado**: Gameplay completo
-
----
-
-### Opción C: Full (Todo)
-```
-1. Instala ServerScript.lua
-2. Instala GameManager.lua
-3. Instala CombatSystem.lua
-4. Presiona Play
-5. ¡Listo! Juego completo
-```
-**Resultado**: Juego totalmente funcional
+**Resultado**: Juego totalmente playable
 
 ---
 
@@ -333,20 +289,19 @@ Una vez funcione todo, considera:
 ```
 Tu Proyecto Roblox (en Studio)
 ├── ServerScriptService
-│   ├── Script (ServerScript.lua) ......... Mapa
-│   └── Script (GameManager.lua) ......... Zombis
+│   └── Script (ServerScript.lua) .... Mapa + Oleadas
 │
 └── StarterPlayer
     └── StarterCharacterScripts
-        └── Script (CombatSystem.lua) ... Combate
+        └── LocalScript (LocalScript.lua) . Combate
 
 Archivos de Documentación (en esta carpeta)
-├── README.md ............................ Guía completa
-├── QUICK_START.md ...................... Inicio rápido
+├── QUICK_START.md ..................... Inicio rápido
+├── README.md ........................... Guía completa
 ├── REFERENCE.md ........................ Referencia técnica
 ├── MAP_VISUALIZATION.md ............... Visualización
 ├── TESTING_CHECKLIST.md ............... Testing
-└── INDEX.md ........................... Este archivo
+└── INDEX.md ............................ Este archivo
 ```
 
 ---
